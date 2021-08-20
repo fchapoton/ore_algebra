@@ -6,7 +6,7 @@ https://github.com/mkauers/ore_algebra/
 Description
 -----------
 
-A Sage implementation of Ore algebras, Ore polynomials, and differentially
+A [Sage](https://www.sagemath.org/) implementation of Ore algebras, Ore polynomials, and differentially
 finite functions
 
 Main features for the most common algebras include basic arithmetic and actions;
