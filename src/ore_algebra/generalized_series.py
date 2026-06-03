@@ -740,7 +740,7 @@ class ContinuousGeneralizedSeries(RingElement):
         Returns the logarithmic derivative of the exponential part of the generalized series
         """
         x = self.__exp.parent().gen()
-        return (x*self.__exp).subs({x : 1/x})
+        return (x * self.__exp).subs({x: 1 / x})
         # Multiply by x because everything seems to be shifted
 
     def has_logarithms(self):

@@ -834,7 +834,7 @@ class OreLeftIdeal(Ideal_nc):
         # D must involve exactly one generator Dgen of the ambient algebra, and this generator must move exactly one
         # generator var of the ground ring.
         A = self.ring()
-        Dgen = [Dgen for Dgen in A.gens() if D.degree(Dgen) != 0] # the unique generator of A appearing in D
+        Dgen = [Dgen for Dgen in A.gens() if D.degree(Dgen) != 0]  # the unique generator of A appearing in D
         var = [k for k in A.base_ring().gens() if D*k != k*D]  # D must commute with all but exactly one
         if len(Dgen) != 1 or len(var) != 1:
             raise ValueError("bad choice of delta")
@@ -1433,7 +1433,7 @@ def solve_CVM_system(PA, P=None, algebra=None, solver=None, infolevel=0):
             j += 1
         rr.append(i + 1)
 
-    for index in range(1, len(rr)): #go through blocks
+    for index in range(1, len(rr)):  # go through blocks
         RHS = []
         Ai = list(PA[rr[index - 1] : rr[index], rr[index - 1] : rr[index]])
 
@@ -1462,8 +1462,7 @@ def solve_CVM_system(PA, P=None, algebra=None, solver=None, infolevel=0):
         sol = [s[1:] for s in sol]
         # when previous solutions don't depend on the next solutions
         if flatten(sol) == [] and ff != [[]]:
-            for f in ff:
-                ffNew.append(f + ([0] * nn))
+            ffNew.extend(f + ([0] * nn) for f in ff)
 
         for j in range(len(sol)):
             res = vector([0] * len(ff[0]))
@@ -1474,7 +1473,7 @@ def solve_CVM_system(PA, P=None, algebra=None, solver=None, infolevel=0):
             ffNew.append(res + g[j])
         ff = ffNew
 
-    ff= [f for f in ff if sum([p**2 for p in f]) != 0]
+    ff = [f for f in ff if sum([p**2 for p in f]) != 0]
     if P is None:
         return ff
     else:
@@ -1522,14 +1521,14 @@ def solve_coupled_system_CVM(mat, rhs=[], algebra=None, solver=None, infolevel=0
 
     n = len(mat)
     if rhs != []:  # constructing new matrix which has the RHS encoded in it
-        B = list(map(list,(zip(*rhs))))
-        zeros = [[0]*(n+len(B[0]))]*(len(rhs))
+        B = list(map(list, (zip(*rhs))))
+        zeros = [[0] * (n + len(B[0]))] * (len(rhs))
         mat = ([mat[i] + B[i] for i in range(n)]) + zeros
 
-    (PA, P) = uncouple_cyclic(mat, A, infolevel)
+    PA, P = uncouple_cyclic(mat, A, infolevel)
     res = solve_CVM_system(PA, P, A, solver, infolevel)
 
-    return [(res[i][:n],res[i][n:n+len(rhs)]) for i in range(len(res))]
+    return [(res[i][:n], res[i][n:n+len(rhs)]) for i in range(len(res))]
 
 
 smallest_lt_first = cmp_to_key(

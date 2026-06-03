@@ -867,9 +867,8 @@ class DFiniteFunction(RingElement):
                 #sequence comes from a d-finite function
                 if parent._backward_calculation is False and len(self._initial_values) < ord:
                     diff = len(initial_conditions) - len(self._initial_values)
-                    zeros = {i:0 for i in range(-diff,0)}
+                    zeros = dict.fromkeys(range(-diff, 0), 0)
                     self._initial_values.update(zeros)
-
 
         elif parent.ore_algebra().is_D():
             if isinstance(initial_val,UnivariateDFiniteSequence):
@@ -886,7 +885,6 @@ class DFiniteFunction(RingElement):
 
         else:
             raise ValueError("not a suitable D-finite function ring")
-
 
     def __copy__(self):
         r"""
@@ -1052,13 +1050,12 @@ class DFiniteFunction(RingElement):
             else:
                 ann = self.__ann
 
-            result = UnivariateDFiniteFunction(self.parent(),ann,seq)
+            result = UnivariateDFiniteFunction(self.parent(), ann, seq)
 
             if self == result:
                 return result
             else:
-                return UnivariateDFiniteFunction(self.parent(),self.__ann,seq)
-
+                return UnivariateDFiniteFunction(self.parent(), self.__ann,seq)
 
     def reduce_factors(self):
         r"""
@@ -1731,6 +1728,7 @@ class DFiniteFunction(RingElement):
         """
         return self._initial_values
 
+
 ##############################################################################
 
 class UnivariateDFiniteSequence(DFiniteFunction):
@@ -2040,13 +2038,12 @@ class UnivariateDFiniteSequence(DFiniteFunction):
         else:
             raise TypeError("the D-finite sequence does not come from a rational function")
 
-
     def generating_function(self):
         r"""
         """
-        A = OreAlgebra(QQ['x'],'Dx')
+        A = OreAlgebra(QQ['x'], 'Dx')
         D = DFiniteFunctionRing(A)
-        return UnivariateDFiniteFunction(D,self.ann().to_D(A),self)
+        return UnivariateDFiniteFunction(D,self.ann().to_D(A), self)
 
     def __add_without_compress__(self, right):
         r"""
@@ -2260,7 +2257,6 @@ class UnivariateDFiniteSequence(DFiniteFunction):
 
         return UnivariateDFiniteSequence(self.parent(), prod_ann, int_val_prod)
 
-
     def cauchy_product(self, right):
         r"""
         Return the Cauchy product of ``self`` and ``right``
@@ -2347,8 +2343,7 @@ class UnivariateDFiniteSequence(DFiniteFunction):
                     cauchy = None
                 int_val_prod.update({(n-ord)+min_degree:cauchy})
 
-
-        #critical points for backward calculation
+        # critical points for backward calculation
         critical_points_negative = self.critical_points(ord,True).union( right.critical_points(ord,True) )
         for n in singularities_negative:
             critical_points_negative.update(range(n-ord,n))
@@ -2473,7 +2468,6 @@ class UnivariateDFiniteSequence(DFiniteFunction):
 
         return UnivariateDFiniteSequence(self.parent(), interlacing_ann, int_val_interlacing)
 
-
     def sum(self):
         r"""
         Return the sequence (s_n)_{n=0}^\infty with s_n = \sum_{k=0}^n self[k].
@@ -2568,22 +2562,21 @@ class UnivariateDFiniteSequence(DFiniteFunction):
 
         if n >= 0:
             n = n+1
-            #check if self is coming from a d-finite function that contains added zeros:
+            # check if self is coming from a d-finite function that contains added zeros:
             if self.parent()._backward_calculation is False and min(self.initial_conditions()) < 0:
                 start = -min(self.initial_conditions())
                 n = n + start
 
-            #1st case: n is smaller than the order - so all needed terms are already given
+            # 1st case: n is smaller than the order - so all needed terms are already given
             if n < ord:
                 return self.initial_values()[start:n]
 
-
-            #2nd case: n is smaller than all relevant singularities - nothing to worry about
+            # 2nd case: n is smaller than all relevant singularities - nothing to worry about
             s = [x for x in self.initial_conditions() if ord <= x]
             if all(n < x for x in s):
                 return self.ann().to_list(self.initial_values(),n, -start)[start:]
 
-            #3rd case: there is at least one singularity in the first n terms of the sequence
+            # 3rd case: there is at least one singularity in the first n terms of the sequence
             s = {x for x in self.initial_conditions() if ord <= x < n}
             r = self.initial_values()
             while s:
@@ -2616,7 +2609,6 @@ class UnivariateDFiniteSequence(DFiniteFunction):
                 return b.expand(-(n+1)+ord+1)[ord:]
             else:
                 return (-n+1)*[0]
-
 
     def __getitem__(self,n):
         r"""
@@ -2690,6 +2682,7 @@ class UnivariateDFiniteSequence(DFiniteFunction):
         v = matrix([int_val]).transpose()/M
         result = Q * v
         return result[0][0]
+
 
 ###############################################################################################################
 class UnivariateDFiniteFunction(DFiniteFunction):

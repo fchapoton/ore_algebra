@@ -597,9 +597,9 @@ def _gauss(pivot, ncpus, fun, mat, degrees, infolevel):
     r = 0  # current row
     cancel_constants = (R.characteristic() == 0)
 
-    col_perm = {}  # col_perm[i] == j means that the current column i corresponds to the original column j
-    for j in range(m):
-        col_perm[j] = j
+    col_perm = {j: j for j in range(m)}
+    # col_perm[i] == j means that the current column i corresponds to
+    # the original column j
 
     _info(infolevel, "forward elimination...", alter=-1)
 
@@ -1504,10 +1504,8 @@ def _galois(subsolver, max_modulus, proof, mat, degrees, infolevel):
             for j in range(m):
                 Vp_i_j = [0] * len(monomial_exponents)
                 for k, mon in enumerate(monomial_exponents):
-                    values = []
-                    for l in range(len(roots)):
-                        values.append(GF(p)(Vp_zip[i][j][l][mon]))  # in Zp
-
+                    values = [GF(p)(Vp_zip[i][j][l][mon])  # in Zp
+                              for l in range(len(roots))]
                     Mprime = []
                     multipoint_evaluate(mod.derivative(new_x), roots, 0, bound, M_tree, Mprime)
                     coeffs = [v / mp for v, mp in zip(values, Mprime)]
@@ -1573,8 +1571,8 @@ def _galois(subsolver, max_modulus, proof, mat, degrees, infolevel):
         except ArithmeticError:
             continue
 
-        if not any([any(mat * s) for s in sol]):
-            return (sol)
+        if not any(any(mat * s) for s in sol):
+            return sol
 
 
 def cra(subsolver, max_modulus=MAX_MODULUS, proof=False, ncpus=1):

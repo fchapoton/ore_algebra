@@ -1394,7 +1394,7 @@ class UnivariateOreOperatorOverUnivariateRing(UnivariateOreOperator):
     # FIXME: Find a better name, this one is ambiguous
     # FIXME: Right now, if the input is 0, the function goes into an infinite loop
 
-    def right_factor_eigenring(self,single_factor=True):
+    def right_factor_eigenring(self, single_factor=True):
         r"""
         Returns a right hand factors of this operator or a list of factors.
 
@@ -1402,7 +1402,6 @@ class UnivariateOreOperatorOverUnivariateRing(UnivariateOreOperator):
 
         - ``single_factor`` (optional) -- if set to ``True`` (default), only the first computed factor will be returned. If set to ``False``, all factors that can be computed using the eigenring method will be returned.
 
-        
         OUTPUT:
 
         A right factor of the given operator or 'failed' if none could be found. If single_factor is set to false than a list of all right factors of the given operator that could be computed will be retuned.
@@ -1466,18 +1465,21 @@ class UnivariateOreOperatorOverUnivariateRing(UnivariateOreOperator):
         # use an ansatz with degree deg
         for deg in range(1, order):
             if d_case:
-                coef_matrices = [matrix([sum(binomial(n,k) * operator.coefficients(sparse=False)[n] * (D**(max(n - k + i, 0)) % operator) for n in range(k, order + 1)).coefficients(sparse=False, padd=order)[0:deg + 1] for i in range(deg + 1)]).transpose() for k in range(order + 1)]
+                coef_matrices = [matrix([sum(binomial(n, k) * operator.coefficients(sparse=False)[n] * (D**(max(n - k + i, 0)) % operator) for n in range(k, order + 1)).coefficients(sparse=False, padd=order)[0:deg + 1] for i in range(deg + 1)]).transpose() for k in range(order + 1)]
             else:
-                coef_matrices = [matrix([(operator.coefficients(sparse=False)[n] * (D**(n + i) % operator)).coefficients(sparse=False,padd=order)[0:deg + 1] for i in range(deg + 1)]).transpose() for n in range(order + 1)]
+                coef_matrices = [matrix([(operator.coefficients(sparse=False)[n] * (D**(n + i) % operator)).coefficients(sparse=False, padd=order)[0:deg + 1] for i in range(deg + 1)]).transpose() for n in range(order + 1)]
             coef_matrices = [coef_matrices[-1].inverse() * cc for cc in coef_matrices[0:-1]]
 
             mat = []
             for k in range(deg + 1):
-                mat += [[1 if j == 1 + i + k * (order) else 0 for j in range((deg+1) * (order))]    for i in range((order - 1))]
-                mat += [flatten([[-cc[k][i] for cc in coef_matrices]for i in range(deg + 1)])]
+                mat += [[1 if j == 1 + i + k * (order) else 0 for j in range((deg+1) * (order))] for i in range((order - 1))]
+                mat += [flatten([[-cc[k][i] for cc in coef_matrices]
+                                 for i in range(deg + 1)])]
             mm = [[base(n) for n in m] for m in mat]
-            res = solve_coupled_system_CVM(mm,[],algebra)
-            res = [sum([r[0][i] * D**(i // (deg + 1))  for i in range(len(r[0])) if i % (order) == 0]) for r in res]
+            res = solve_coupled_system_CVM(mm, [], algebra)
+            res = [sum([r[0][i] * D**(i // (deg + 1))
+                        for i in range(len(r[0])) if i % (order) == 0])
+                   for r in res]
             # check if non constant solution is found
             if not all(r in QQ for r in res):
                 break
